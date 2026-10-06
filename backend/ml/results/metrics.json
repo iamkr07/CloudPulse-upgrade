@@ -1,0 +1,172 @@
+{
+  "seed": 42,
+  "feature_columns": [
+    "past_cpu_min",
+    "past_cpu_max",
+    "past_cpu_mean",
+    "past_cpu_range",
+    "past_cpu_volatility",
+    "past_cpu_trend",
+    "last_cpu_avg"
+  ],
+  "random_forest_parameters": {
+    "n_estimators": 100,
+    "max_depth": 20,
+    "max_leaf_nodes": 4000,
+    "min_samples_leaf": 5,
+    "random_state": 42,
+    "n_jobs": -1,
+    "class_weight": "balanced_subsample"
+  },
+  "thresholds": {
+    "underutilized_below": 30,
+    "overutilized_above": 70
+  },
+  "train_rows": 960974,
+  "test_rows": 240541,
+  "random_forest": {
+    "accuracy": 0.9794588032809376,
+    "majority_class_baseline_accuracy": 0.936410009104477,
+    "majority_class_baseline_label": "Underutilized",
+    "precision_recall_f1_per_class": {
+      "Normal": {
+        "precision": 0.7778494161472885,
+        "recall": 0.8890526488168345,
+        "f1-score": 0.8297417086963167,
+        "support": 12213.0
+      },
+      "Overutilized": {
+        "precision": 0.7474096891626996,
+        "recall": 0.8657152124554006,
+        "f1-score": 0.802224226029456,
+        "support": 3083.0
+      },
+      "Underutilized": {
+        "precision": 0.9957939294474264,
+        "recall": 0.9859175564385447,
+        "f1-score": 0.9908311322101656,
+        "support": 225245.0
+      },
+      "accuracy": 0.9794588032809376,
+      "macro avg": {
+        "precision": 0.8403510115858048,
+        "recall": 0.9135618059035933,
+        "f1-score": 0.8742656889786461,
+        "support": 240541.0
+      },
+      "weighted avg": {
+        "precision": 0.9815446956214575,
+        "recall": 0.9794588032809376,
+        "f1-score": 0.9802347672614469,
+        "support": 240541.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        10858,
+        548,
+        807
+      ],
+      [
+        283,
+        2669,
+        131
+      ],
+      [
+        2818,
+        354,
+        222073
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "Normal",
+      "Overutilized",
+      "Underutilized"
+    ],
+    "feature_importances": {
+      "past_cpu_min": 0.11736816510233795,
+      "past_cpu_max": 0.14469046532287175,
+      "past_cpu_mean": 0.2936624054489933,
+      "past_cpu_range": 0.04938452533497988,
+      "past_cpu_volatility": 0.06911020868787689,
+      "past_cpu_trend": 0.026722496868623075,
+      "last_cpu_avg": 0.2990617332343173
+    }
+  },
+  "xgboost": {
+    "accuracy": 0.9664589404716868,
+    "majority_class_baseline_accuracy": 0.936410009104477,
+    "majority_class_baseline_label": "Underutilized",
+    "precision_recall_f1_per_class": {
+      "Normal": {
+        "precision": 0.6867171107013417,
+        "recall": 0.8843036109064112,
+        "f1-score": 0.7730851825340014,
+        "support": 12213.0
+      },
+      "Overutilized": {
+        "precision": 0.5187707029812293,
+        "recall": 0.9143691209860525,
+        "f1-score": 0.6619701772924739,
+        "support": 3083.0
+      },
+      "Underutilized": {
+        "precision": 0.9976023338499408,
+        "recall": 0.9716264511975848,
+        "f1-score": 0.9844430700028114,
+        "support": 225245.0
+      },
+      "accuracy": 0.9664589404716868,
+      "macro avg": {
+        "precision": 0.7343633825108372,
+        "recall": 0.9234330610300162,
+        "f1-score": 0.8064994766097623,
+        "support": 240541.0
+      },
+      "weighted avg": {
+        "precision": 0.9756805860053651,
+        "recall": 0.9664589404716868,
+        "f1-score": 0.969578669306537,
+        "support": 240541.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        10800,
+        951,
+        462
+      ],
+      [
+        200,
+        2819,
+        64
+      ],
+      [
+        4727,
+        1664,
+        218854
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "Normal",
+      "Overutilized",
+      "Underutilized"
+    ],
+    "feature_importances": {
+      "past_cpu_min": 0.021411417052149773,
+      "past_cpu_max": 0.05576292797923088,
+      "past_cpu_mean": 0.36926788091659546,
+      "past_cpu_range": 0.02084590494632721,
+      "past_cpu_volatility": 0.11159703135490417,
+      "past_cpu_trend": 0.013518456369638443,
+      "last_cpu_avg": 0.4075963795185089
+    }
+  },
+  "prophet": {
+    "rmse": 0.058850749158213374,
+    "mae": 0.05656577011663296,
+    "train_timestamp_count": 6,
+    "test_timestamp_count": 6
+  },
+  "best_classifier": "random_forest"
+}

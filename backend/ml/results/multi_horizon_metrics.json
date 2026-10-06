@@ -1,0 +1,265 @@
+{
+  "seed": 42,
+  "lookback_readings": 6,
+  "horizons_minutes": [
+    5,
+    15,
+    30
+  ],
+  "feature_columns": [
+    "past_cpu_min",
+    "past_cpu_max",
+    "past_cpu_mean",
+    "past_cpu_range",
+    "past_cpu_volatility",
+    "past_cpu_trend",
+    "last_cpu_avg"
+  ],
+  "random_forest_parameters": {
+    "n_estimators": 100,
+    "max_depth": 20,
+    "max_leaf_nodes": 4000,
+    "min_samples_leaf": 5,
+    "random_state": 42,
+    "n_jobs": -1,
+    "class_weight": "balanced_subsample"
+  },
+  "total_vms": 227133,
+  "vms_eligible_for_30_minute_horizon": 222190,
+  "vms_dropped_for_30_minute_horizon": 4943,
+  "raw_rows_in_dropped_vms": 28248,
+  "5": {
+    "train_windows": 960974,
+    "test_windows": 240541,
+    "best_classifier": "random_forest",
+    "test_class_distribution": {
+      "Normal": 0.05077304908518714,
+      "Overutilized": 0.012816941810335868,
+      "Underutilized": 0.936410009104477
+    },
+    "random_forest": {
+      "accuracy": 0.9794588032809376,
+      "macro_f1": 0.8742656889786461,
+      "majority_baseline_accuracy": 0.936410009104477,
+      "majority_baseline_label": "Underutilized",
+      "per_class_f1": {
+        "Normal": 0.8297417086963167,
+        "Overutilized": 0.802224226029456,
+        "Underutilized": 0.9908311322101656
+      },
+      "per_class_precision": {
+        "Normal": 0.7778494161472885,
+        "Overutilized": 0.7474096891626996,
+        "Underutilized": 0.9957939294474264
+      },
+      "per_class_recall": {
+        "Normal": 0.8890526488168345,
+        "Overutilized": 0.8657152124554006,
+        "Underutilized": 0.9859175564385447
+      },
+      "class_support": {
+        "Normal": 12213,
+        "Overutilized": 3083,
+        "Underutilized": 225245
+      },
+      "labels": [
+        "Normal",
+        "Overutilized",
+        "Underutilized"
+      ]
+    },
+    "xgboost": {
+      "accuracy": 0.9664589404716868,
+      "macro_f1": 0.8064994766097623,
+      "majority_baseline_accuracy": 0.936410009104477,
+      "majority_baseline_label": "Underutilized",
+      "per_class_f1": {
+        "Normal": 0.7730851825340014,
+        "Overutilized": 0.6619701772924739,
+        "Underutilized": 0.9844430700028114
+      },
+      "per_class_precision": {
+        "Normal": 0.6867171107013417,
+        "Overutilized": 0.5187707029812293,
+        "Underutilized": 0.9976023338499408
+      },
+      "per_class_recall": {
+        "Normal": 0.8843036109064112,
+        "Overutilized": 0.9143691209860525,
+        "Underutilized": 0.9716264511975848
+      },
+      "class_support": {
+        "Normal": 12213,
+        "Overutilized": 3083,
+        "Underutilized": 225245
+      },
+      "labels": [
+        "Normal",
+        "Overutilized",
+        "Underutilized"
+      ]
+    },
+    "prophet": {
+      "rmse": 0.058850749158213374,
+      "mae": 0.05656577011663296,
+      "train_timestamp_count": 6,
+      "test_timestamp_count": 6
+    }
+  },
+  "15": {
+    "train_windows": 602969,
+    "test_windows": 151045,
+    "best_classifier": "random_forest",
+    "test_class_distribution": {
+      "Normal": 0.051011288026746995,
+      "Overutilized": 0.01282399284981297,
+      "Underutilized": 0.93616471912344
+    },
+    "random_forest": {
+      "accuracy": 0.9784964745605614,
+      "macro_f1": 0.8588207248273796,
+      "majority_baseline_accuracy": 0.93616471912344,
+      "majority_baseline_label": "Underutilized",
+      "per_class_f1": {
+        "Normal": 0.8271265211276219,
+        "Overutilized": 0.758701238028498,
+        "Underutilized": 0.990634415326019
+      },
+      "per_class_precision": {
+        "Normal": 0.7820305272895467,
+        "Overutilized": 0.6928327645051194,
+        "Underutilized": 0.9954088809236503
+      },
+      "per_class_recall": {
+        "Normal": 0.8777417261518494,
+        "Overutilized": 0.8384099122354156,
+        "Underutilized": 0.9859055324144467
+      },
+      "class_support": {
+        "Normal": 7705,
+        "Overutilized": 1937,
+        "Underutilized": 141403
+      },
+      "labels": [
+        "Normal",
+        "Overutilized",
+        "Underutilized"
+      ]
+    },
+    "xgboost": {
+      "accuracy": 0.9645205071336357,
+      "macro_f1": 0.7914383428626696,
+      "majority_baseline_accuracy": 0.93616471912344,
+      "majority_baseline_label": "Underutilized",
+      "per_class_f1": {
+        "Normal": 0.7694336161430865,
+        "Overutilized": 0.6212148043208784,
+        "Underutilized": 0.9836666081240435
+      },
+      "per_class_precision": {
+        "Normal": 0.6890851216757368,
+        "Overutilized": 0.47277628032345015,
+        "Underutilized": 0.9972746300764557
+      },
+      "per_class_recall": {
+        "Normal": 0.8709928617780662,
+        "Overutilized": 0.9055240061951472,
+        "Underutilized": 0.9704249556232895
+      },
+      "class_support": {
+        "Normal": 7705,
+        "Overutilized": 1937,
+        "Underutilized": 141403
+      },
+      "labels": [
+        "Normal",
+        "Overutilized",
+        "Underutilized"
+      ]
+    },
+    "prophet": {
+      "rmse": 0.07624889711942773,
+      "mae": 0.07182534189608658,
+      "train_timestamp_count": 4,
+      "test_timestamp_count": 4
+    }
+  },
+  "30": {
+    "train_windows": 68152,
+    "test_windows": 17343,
+    "best_classifier": "random_forest",
+    "test_class_distribution": {
+      "Normal": 0.05131753445194026,
+      "Overutilized": 0.012396932479963098,
+      "Underutilized": 0.9362855330680966
+    },
+    "random_forest": {
+      "accuracy": 0.9761863576082569,
+      "macro_f1": 0.8442137433975079,
+      "majority_baseline_accuracy": 0.9362855330680966,
+      "majority_baseline_label": "Underutilized",
+      "per_class_f1": {
+        "Normal": 0.8112189859762675,
+        "Overutilized": 0.732,
+        "Underutilized": 0.9894222442162564
+      },
+      "per_class_precision": {
+        "Normal": 0.7800829875518672,
+        "Overutilized": 0.6421052631578947,
+        "Underutilized": 0.9938486392444389
+      },
+      "per_class_recall": {
+        "Normal": 0.8449438202247191,
+        "Overutilized": 0.8511627906976744,
+        "Underutilized": 0.9850351028451779
+      },
+      "class_support": {
+        "Normal": 890,
+        "Overutilized": 215,
+        "Underutilized": 16238
+      },
+      "labels": [
+        "Normal",
+        "Overutilized",
+        "Underutilized"
+      ]
+    },
+    "xgboost": {
+      "accuracy": 0.9684022372138615,
+      "macro_f1": 0.8071454565646995,
+      "majority_baseline_accuracy": 0.9362855330680966,
+      "majority_baseline_label": "Underutilized",
+      "per_class_f1": {
+        "Normal": 0.7784004075394804,
+        "Overutilized": 0.657439446366782,
+        "Underutilized": 0.9855965157878364
+      },
+      "per_class_precision": {
+        "Normal": 0.712022367194781,
+        "Overutilized": 0.5234159779614325,
+        "Underutilized": 0.9958508832589426
+      },
+      "per_class_recall": {
+        "Normal": 0.8584269662921349,
+        "Overutilized": 0.8837209302325582,
+        "Underutilized": 0.9755511762532332
+      },
+      "class_support": {
+        "Normal": 890,
+        "Overutilized": 215,
+        "Underutilized": 16238
+      },
+      "labels": [
+        "Normal",
+        "Overutilized",
+        "Underutilized"
+      ]
+    },
+    "prophet": {
+      "available": false,
+      "reason": "Insufficient distinct aggregate timestamps for Prophet",
+      "train_timestamp_count": 1,
+      "test_timestamp_count": 1
+    }
+  }
+}

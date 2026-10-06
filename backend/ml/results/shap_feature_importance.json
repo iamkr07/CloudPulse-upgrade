@@ -1,0 +1,17 @@
+{
+  "sample_rows": 1000,
+  "feature_importance_mean_abs_shap": {
+    "past_cpu_mean": 0.1500059960100354,
+    "last_cpu_avg": 0.14427418517467627,
+    "past_cpu_max": 0.053864484383003654,
+    "past_cpu_min": 0.0394686888071394,
+    "past_cpu_volatility": 0.028135194780045784,
+    "past_cpu_range": 0.014984108287343345,
+    "past_cpu_trend": 0.008724378306462124
+  },
+  "classes": [
+    "Normal",
+    "Overutilized",
+    "Underutilized"
+  ]
+}

@@ -1,0 +1,10 @@
+fastapi==0.104.1
+uvicorn==0.24.0
+scikit-learn==1.8.0
+numpy==2.4.3
+pandas==3.0.1
+joblib==1.5.3
+python-multipart==0.0.22
+xgboost==3.2.0
+prophet==1.4.0
+shap==0.51.0

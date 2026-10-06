@@ -1,0 +1,17 @@
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+frontend/dist/
+frontend/build/
+backend/ml/data/raw/
+backend/ml/data/processed/dataset_v2.csv
+backend/ml/data/processed/train.csv
+backend/ml/data/processed/test.csv
+.DS_Store
+Thumbs.db
+.vscode/
+*.log
+.env
+.env.local
