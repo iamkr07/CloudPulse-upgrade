@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: cloudpulse-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: |
+      pip install -r requirements.txt
+      python ml/data/download.py
+      python ml/data/prepare.py
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: FRONTEND_URL
+        sync: false

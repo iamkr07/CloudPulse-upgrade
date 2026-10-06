@@ -1,5 +1,5 @@
-// Use relative path for Vercel deployment, fallback to localhost for local development
-const API_BASE = import.meta.env.VITE_API_URL || "";
+// Use the Render backend URL from Vercel env vars, with a localhost fallback for local development.
+const API_BASE = (import.meta.env.VITE_API_URL || "http://localhost:8000").replace(/\/+$/, "");
 
 export const fetchResources = async () => {
   const res = await fetch(`${API_BASE}/api/resources`);

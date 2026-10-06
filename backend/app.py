@@ -16,9 +16,19 @@ from ml.explainability import explain_features
 # -------------------------------
 app = FastAPI(title="Cloud Resource Monitoring API")
 
+
+def get_allowed_origins():
+    configured_origins = os.getenv("FRONTEND_URL", "")
+    if not configured_origins:
+        return ["*"]
+
+    origins = [origin.strip() for origin in configured_origins.split(",") if origin.strip()]
+    return origins or ["*"]
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=get_allowed_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
