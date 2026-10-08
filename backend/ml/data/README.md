@@ -101,3 +101,8 @@ The preparation uses random seed `42`, splits complete VMs 80/20 with
 future horizon. This prevents a VM's adjacent windows from crossing train and
 test. It writes `processed/dataset_v2.csv`, `processed/train.csv`, and
 `processed/test.csv`. There is no replacement sampling in this pipeline.
+
+Preparation also writes `processed/serving_history.csv`, containing the five
+raw CPU-reading columns only for VMs referenced by the first 200 test windows.
+The live API uses this bounded file for simulation and forecast history instead
+of loading the full `dataset_v2.csv`.

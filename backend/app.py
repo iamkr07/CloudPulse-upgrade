@@ -4,12 +4,11 @@ import numpy as np
 import os
 import pandas as pd
 from threading import Lock
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from ml.features import FEATURE_COLUMNS, build_features, build_scaled_feature_window, status_from_utilization
-from ml.explainability import explain_features
 
 # -------------------------------
 # INIT
@@ -46,6 +45,8 @@ resource_request_lock = Lock()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ML_DIR = os.path.join(BASE_DIR, "ml")
+SERVING_HISTORY_PATH = os.path.join(ML_DIR, "data", "processed", "serving_history.csv")
+SERVING_RESOURCE_LIMIT = 200
 
 
 def get_raw_dataset():
@@ -53,8 +54,26 @@ def get_raw_dataset():
     if raw_dataset is None:
         with raw_dataset_lock:
             if raw_dataset is None:
-                raw_dataset = pd.read_csv(os.path.join(ML_DIR, "data", "processed", "dataset_v2.csv"))
+                raw_dataset = pd.read_csv(
+                    SERVING_HISTORY_PATH,
+                    usecols=["vm_id", "timestamp", "cpu_usage", "min_cpu", "max_cpu"],
+                )
     return raw_dataset
+
+
+def get_served_resource(resource_id: int, columns: list[str]):
+    if resource_id < 0 or resource_id >= SERVING_RESOURCE_LIMIT:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Resource id must be between 0 and {SERVING_RESOURCE_LIMIT - 1}",
+        )
+    dataset_path = os.path.join(ML_DIR, "data", "processed", "test.csv")
+    frame = pd.read_csv(dataset_path, usecols=["id", *columns], nrows=SERVING_RESOURCE_LIMIT)
+    matches = frame[frame["id"] == resource_id]
+    if matches.empty:
+        raise HTTPException(status_code=404, detail="Resource not found in the served dataset")
+    return matches.iloc[0]
+
 
 @app.on_event("startup")
 def load_model():
@@ -101,7 +120,11 @@ def get_resources():
     resources = []
 
     try:
-        df = pd.read_csv(dataset_path)
+        df = pd.read_csv(
+            dataset_path,
+            usecols=["id", *FEATURE_COLUMNS, "workload_type"],
+            nrows=SERVING_RESOURCE_LIMIT,
+        )
         df = df.fillna(0)
 
         # Advance through deterministic sequential slices of the fixed test set.
@@ -213,12 +236,10 @@ def health():
 @app.get("/api/resources/{resource_id}/explain")
 def explain_resource(resource_id: int):
     """Return SHAP contributions for a saved production test-window prediction."""
-    dataset_path = os.path.join(ML_DIR, "data", "processed", "test.csv")
-    frame = pd.read_csv(dataset_path)
-    matches = frame[frame["id"] == resource_id]
-    if matches.empty:
-        return {"error": "Resource not found"}
-    explanation = explain_features(matches.iloc[[0]])
+    row = get_served_resource(resource_id, FEATURE_COLUMNS)
+    from ml.explainability import explain_features
+
+    explanation = explain_features(pd.DataFrame([row]))
     explanation["resource_id"] = resource_id
     return explanation
 
@@ -226,13 +247,10 @@ def explain_resource(resource_id: int):
 @app.get("/api/resources/{resource_id}/forecast")
 def forecast_resource(resource_id: int, scale: float = Query(1.0, ge=0.2, le=3.0)):
     """Return status forecasts for baseline or a scaled raw CPU history."""
-    dataset_path = os.path.join(ML_DIR, "data", "processed", "test.csv")
-    frame = pd.read_csv(dataset_path)
-    matches = frame[frame["id"] == resource_id]
-    if matches.empty:
-        return {"error": "Resource not found"}
-
-    row = matches.iloc[0]
+    row = get_served_resource(
+        resource_id,
+        ["vm_id", "last_feature_timestamp", "last_cpu_avg"],
+    )
     raw_frame = get_raw_dataset()
     scaled_features = build_scaled_feature_window(raw_frame, row["vm_id"], row["last_feature_timestamp"], scale)
     forecasts = []
@@ -246,6 +264,7 @@ def forecast_resource(resource_id: int, scale: float = Query(1.0, ge=0.2, le=3.0
             "status": horizon_encoder.inverse_transform([predicted_index])[0],
             "confidence": round(float(np.max(probabilities)) * 100, 2),
         })
+        del horizon_model, horizon_encoder, probabilities, predicted_index
     return {"resource_id": resource_id, "scale": scale, "forecasts": forecasts}
 
 # --------------------------------
@@ -260,13 +279,10 @@ def simulate(data: dict):
     try:
         resource_id = int(data.get("resource_id"))
         cpu_scale = max(0.2, min(3.0, float(data.get("cpu_scale", 1.0))))
-        dataset_path = os.path.join(ML_DIR, "data", "processed", "test.csv")
-        frame = pd.read_csv(dataset_path)
-        matches = frame[frame["id"] == resource_id]
-        if matches.empty:
-            raise ValueError(f"Resource window {resource_id} was not found")
-
-        row = matches.iloc[0]
+        row = get_served_resource(
+            resource_id,
+            ["vm_id", "last_feature_timestamp", "last_cpu_avg"],
+        )
         raw_frame = get_raw_dataset()
         scaled_features = build_scaled_feature_window(raw_frame, row["vm_id"], row["last_feature_timestamp"], cpu_scale)
         status = label_encoder.inverse_transform(model.predict(scaled_features))[0]
@@ -303,6 +319,8 @@ def simulate(data: dict):
             "recommendation": recommendation
         }
     
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Simulation error: {e}")
         return {

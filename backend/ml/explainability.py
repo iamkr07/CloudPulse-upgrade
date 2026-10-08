@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 
 import joblib
-import matplotlib.pyplot as plt
 import pandas as pd
 import shap
 
@@ -61,6 +60,8 @@ def explain_features(features: pd.DataFrame) -> dict:
 
 def build_global_summary() -> dict:
     """Compute global mean absolute SHAP importance on a bounded test sample."""
+    import matplotlib.pyplot as plt
+
     test = pd.read_csv(TEST_PATH)
     sample = test.sample(min(GLOBAL_SAMPLE_SIZE, len(test)), random_state=42)
     features = sample[FEATURE_COLUMNS].astype(float)
