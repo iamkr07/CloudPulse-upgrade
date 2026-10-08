@@ -32,12 +32,13 @@ def _class_values(explainer: shap.TreeExplainer, features: pd.DataFrame):
     return [values]
 
 
-def explain_features(features: pd.DataFrame) -> dict:
-    """Return per-feature SHAP contributions for the model's predicted class."""
-    model = joblib.load(MODEL_PATH)
-    encoder = joblib.load(ENCODER_PATH)
+def _explain_features(
+    features: pd.DataFrame,
+    model,
+    encoder,
+    explainer: shap.TreeExplainer,
+) -> dict:
     features = features[FEATURE_COLUMNS].astype(float)
-    explainer = shap.TreeExplainer(model)
     values_by_class = _class_values(explainer, features)
     predicted_index = int(model.predict(features)[0])
     contributions = values_by_class[predicted_index][0]
@@ -56,6 +57,13 @@ def explain_features(features: pd.DataFrame) -> dict:
             for name, value in zip(FEATURE_COLUMNS, contributions)
         ],
     }
+
+
+def explain_features(features: pd.DataFrame) -> dict:
+    """Return per-feature SHAP contributions for the model's predicted class."""
+    model = joblib.load(MODEL_PATH)
+    encoder = joblib.load(ENCODER_PATH)
+    return _explain_features(features, model, encoder, shap.TreeExplainer(model))
 
 
 def build_global_summary() -> dict:

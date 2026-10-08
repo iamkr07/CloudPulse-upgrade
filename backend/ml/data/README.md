@@ -106,3 +106,8 @@ Preparation also writes `processed/serving_history.csv`, containing the five
 raw CPU-reading columns only for VMs referenced by the first 200 test windows.
 The live API uses this bounded file for simulation and forecast history instead
 of loading the full `dataset_v2.csv`.
+
+The Render build also generates `processed/explanations.json` from the
+production Random Forest for the first 200 test-window IDs. The API serves these
+precomputed explanations without importing SHAP at request time. Regenerate
+this file whenever the production model is retrained.

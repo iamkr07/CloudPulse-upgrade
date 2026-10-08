@@ -1,4 +1,5 @@
 import ast
+import json
 import joblib
 import numpy as np
 import os
@@ -40,13 +41,26 @@ model = None
 label_encoder = None
 raw_dataset = None
 raw_dataset_lock = Lock()
+explanations = None
+explanations_lock = Lock()
 resource_request_count = 0
 resource_request_lock = Lock()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ML_DIR = os.path.join(BASE_DIR, "ml")
 SERVING_HISTORY_PATH = os.path.join(ML_DIR, "data", "processed", "serving_history.csv")
+EXPLANATIONS_PATH = os.path.join(ML_DIR, "data", "processed", "explanations.json")
 SERVING_RESOURCE_LIMIT = 200
+
+
+def get_explanations():
+    global explanations
+    if explanations is None:
+        with explanations_lock:
+            if explanations is None:
+                with open(EXPLANATIONS_PATH, encoding="utf-8") as source:
+                    explanations = json.load(source)
+    return explanations
 
 
 def get_raw_dataset():
@@ -235,12 +249,15 @@ def health():
 
 @app.get("/api/resources/{resource_id}/explain")
 def explain_resource(resource_id: int):
-    """Return SHAP contributions for a saved production test-window prediction."""
-    row = get_served_resource(resource_id, FEATURE_COLUMNS)
-    from ml.explainability import explain_features
-
-    explanation = explain_features(pd.DataFrame([row]))
-    explanation["resource_id"] = resource_id
+    """Return precomputed SHAP contributions for a served test-window prediction."""
+    if resource_id < 0 or resource_id >= SERVING_RESOURCE_LIMIT:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Resource id must be between 0 and {SERVING_RESOURCE_LIMIT - 1}",
+        )
+    explanation = get_explanations().get(str(resource_id))
+    if explanation is None:
+        raise HTTPException(status_code=404, detail="Resource explanation not found")
     return explanation
 
 
